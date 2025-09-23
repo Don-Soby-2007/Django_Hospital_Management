@@ -6,16 +6,49 @@ Booking
 {% endblock %}
 
 {% block content %}
-<h1 class="text-center">Make An Appointment</h1>
-<hr>
+    <h1 class="text-center">Make An Appointment</h1>
+    <hr>
 
-<div class="container w-25 text-center my-5">
-    <form action="" method="post">
-        {{form |crispy}}
-        <br>
-        <button class="btn btn-primary mb-5" type="submit">Submit</button>
-    </form>
-</div>
+    <div class="container w-25 text-center my-5">
+        <form action="" method="post">
+            {% csrf_token %}
+            {{form |crispy}}
+            <br>
+            <button class="btn btn-primary mb-5" type="submit">Submit</button>
+        </form>
+    </div>
 
+    <div class="modal fade" id="successModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel">Booked Successfully</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+            Your appointment has been booked successfully!
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" onclick="Reload()">Close</button>
+        </div>
+        </div>
+    </div>
+    </div>
+
+    {% if success %}
+        <script>
+            document.addEventListener("DOMContentLoaded", function () {
+                var successModal = new bootstrap.Modal(document.getElementById("successModal"));
+                successModal.show();
+
+                // When modal is closed, remove ?success=1 so it doesn’t pop up again
+                document.getElementById("successModal").addEventListener("hidden.bs.modal", function () {
+                    const url = new URL(window.location.href);
+                    url.searchParams.delete("success");
+                    window.history.replaceState({}, document.title, url.pathname);
+                });
+                });
+        </script>
+    {% endif %}
 
 {% endblock %}

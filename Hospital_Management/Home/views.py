@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from .models import Departments, Doctors
 from .forms import BookingForm
 
@@ -18,11 +18,19 @@ def about(request):
 
 
 def booking(request):
-    form = BookingForm()
-    dict_form = {
-        "form": form
-    }
-    return render(request, 'booking.html', dict_form)
+    success = False
+
+    if request.method == "POST":
+        form = BookingForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect("/booking/?success=1")
+
+    else:
+        form = BookingForm()
+
+    success = request.GET.get("success") == "1"
+    return render(request, "booking.html", {"form": form, "success": success})
 
 
 def doctors(request):
